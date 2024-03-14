@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hnust.mapper.SuggestionMapper">
+
+    <update id="update" parameterType="Suggestion">
+        UPDATE lost_found.suggestions
+        <set>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="tag != null">tag = #{tag},</if>
+            <if test="poll_count != null">poll_count = #{poll_count},</if>
+            <if test="content != null and content != ''">status = #{status},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="validateMsg != null and validateMsg != ''">validateMsg = #{validateMsg},</if>
+            <if test="validatorId != null">validatorId = #{validatorId},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteByIds">
+        delete from suggestions where id in
+        <foreach collection="ids" item="id" separator="," close=")" open="(">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="pageQuery" resultType="org.hnust.entity.Suggestion">
+        select * from suggestions
+        <where>
+            <if test="role == 1"> <!-- If role is USER -->
+                and status != 1 <!-- Exclude suggestions with status USER -->
+            </if>
+            <if test="user_id != null">
+                and user_id = #{user_id}
+            </if>
+            <if test="tag != null">
+                and tag = #{tag}
+            </if>
+            <if test="poll_count != null">
+                and poll_count &gt; #{poll_count}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="validatorId != null">
+                and validatorId = #{validatorId}
+            </if>
+        </where>
+        order by publishTime, poll_count desc
+    </select>
+
+
+</mapper>

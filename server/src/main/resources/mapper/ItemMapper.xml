@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hnust.mapper.ItemMapper">
+
+    <update id="update" parameterType="Item">
+        UPDATE items
+        <set>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+            <if test="img != null">img = #{img},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="tag != null">tag = #{tag},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="isLost != null">is_lost = #{isLost},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="publishTime != null">publish_time = #{publishTime},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteByIds">
+        delete from items where id in
+        <foreach collection="ids" item="id" separator="," close=")" open="(">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="pageQuery" resultType="Item">
+        select * from items
+        <where>
+            <if test="role == 1"> <!-- If role is USER -->
+                and status != 1 <!-- Exclude suggestions with status USER -->
+            </if>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="tag != null">
+                and tag = #{tag}
+            </if>
+            <if test="userId != null">
+                and userId = #{userId}
+            </if>
+            <if test="isLost != null">
+                and isLost = #{isLost}
+            </if>
+        </where>
+        order by end_time asc , start_time desc
+    </select>
+
+</mapper>

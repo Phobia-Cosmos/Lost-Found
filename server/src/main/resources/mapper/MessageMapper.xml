@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hnust.mapper.MessageMapper">
+
+    <update id="loadMessageList">
+        SELECT * FROM messages
+        <where>
+            <if test="item_id != null">
+                and item_id = #{item_id}
+            </if>
+            <if test="loadtype != null and loadtype == 1">
+                and update_time <![CDATA[>]]> #{update_time}
+            </if>
+            <if test="loadtype != null and loadtype == 2">
+                and update_time <![CDATA[<]]> #{update_time}
+            </if>
+        </where>
+        order by update_time desc
+        limit #{messageQueryDTO.size}
+    </update>
+
+     <delete id="deleteByIds">
+        delete from messages where id in
+        <foreach collection="ids" item="id" separator="," close=")" open="(">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -31,12 +31,13 @@ public class WebConfig extends WebMvcConfigurationSupport {
         log.info("开始注册自定义拦截器...");
         registry.addInterceptor(jwtTokenAdminInterceptor)
                 .addPathPatterns("/admin/v2/**")
-                .excludePathPatterns("/admin/v2/user/login");
+                .excludePathPatterns("/admin/v2/user/login")
+                .excludePathPatterns("/admin/v2/user/register");  // Exclude GET, PUT, DELETE requests
 
         registry.addInterceptor(jwtTokenUserInterceptor)
                 .addPathPatterns("/user/**")
                 .excludePathPatterns("/user/v2/user/login")
-                .excludePathPatterns("/user/v2/user/register");  // Exclude GET, PUT, DELETE requests
+                .excludePathPatterns("/user/v2/user/register");
     }
 
     @Bean

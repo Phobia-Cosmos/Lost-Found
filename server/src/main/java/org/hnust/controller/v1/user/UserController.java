@@ -117,4 +117,45 @@ public class UserController {
 
         return Result.success(adminLoginVO, "用户登录成功");
     }
+
+//     下方是测试接口参数与注解关系的注解， 来自于V2
+
+    // @PostMapping("/register1")
+    // @ApiOperation("新增用户1")
+    // public Result register1(String username, String password, String phone, String email) {
+    //     LoginDTO loginDTO = new LoginDTO(username, password, phone, email);
+    //     log.info("新增用户: {}", loginDTO);
+    //     userService.register(loginDTO, USER);
+    //     return Result.success("账号注册成功！");
+    // }
+    //
+    // @PostMapping("/register2/{username}/{password}/{phone}/{email}")
+    // @ApiOperation("新增用户2")
+    // public Result register2(@PathVariable String username, @PathVariable String password, @PathVariable String phone, @PathVariable String email) {
+    //     LoginDTO loginDTO = new LoginDTO(username, password, phone, email);
+    //     log.info("新增用户: {}", loginDTO);
+    //     userService.register(loginDTO, USER);
+    //     return Result.success("账号注册成功！");
+    // }
+
+    // @PutMapping("editPassword1")
+    // @ApiOperation("修改密码1")
+    // public Result editPassword1(@RequestParam("newPassword") String newPassword, @RequestParam("oldPassword") String oldPassword, @RequestParam("userId") Long userId) {
+    //     log.info("{}", userId);
+    //     PasswordEditDTO passwordEditDTO = new PasswordEditDTO(userId, oldPassword, newPassword);
+    //     log.info("修改{}号用户密码...", passwordEditDTO.getUserId());
+    //     userService.editPassword(passwordEditDTO);
+    //     return Result.success("修改密码成功");
+    // }
+
+    // @GetMapping("/page1")
+    // @ApiOperation("用户分页查询1")
+    // public Result<PageResult> page1(String name, String phone, String email, String school,
+    //                                 int page, int pageSize) {
+    //     UserPageQueryDTO userPageQueryDTO = new UserPageQueryDTO(name, phone,
+    //             email, school, page, pageSize);
+    //     log.info("用户分页查询，参数为: {}", userPageQueryDTO);
+    //     PageResult pageResult = userService.pageQuery(userPageQueryDTO);
+    //     return Result.success(pageResult);
+    // }
 }

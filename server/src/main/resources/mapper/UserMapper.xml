@@ -7,6 +7,9 @@
     <select id="pageQuery" resultType="org.hnust.entity.User">
         select * from users
         <where>
+            <if test="role != null">
+                and role = #{role}
+            </if>
             <if test="name != null and name != ''">
                 and name like concat('%', #{name}, '%')
             </if>

@@ -60,7 +60,7 @@ public class SuggestionController {
     // 要先判断这个建议是不是自己的
     public Result delete(@RequestParam List<Long> ids) {
         log.info("用户{}批量删除{}号建议：", BaseContext.getCurrentUser().getUsername(), ids);
-        suggestionService.deleteByIds(ids);
+        suggestionService.deleteByIds(ids, USER);
         return Result.success();
     }
 

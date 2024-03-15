@@ -15,8 +15,8 @@ import java.sql.Timestamp;
 public class Message implements Serializable {
     private Long id;
     private Long itemId;
-    private Long lostUserId;
-    private Long foundUserId;
+    private Long sender;
+    private Long receiver;
     private String content;
     private Timestamp createTime;
     private Timestamp updateTime;

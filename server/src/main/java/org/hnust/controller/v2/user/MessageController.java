@@ -26,9 +26,9 @@ public class MessageController {
     @PostMapping
     @ApiOperation("用户留言")
     public Result publish(@RequestBody MessageDTO messageDTO) {
-        log.info("{}用户向用户{}留言...", messageDTO.getLostUserId(), messageDTO.getFoundUserId());
+        log.info("{}用户向用户{}留言...", messageDTO.getSender(), messageDTO.getReceiver());
         messageService.publish(messageDTO);
-        return Result.success();
+        return Result.success(messageDTO.getSender() + "用户向用户" + messageDTO.getReceiver() + "留言...");
     }
 
     @DeleteMapping
@@ -36,7 +36,7 @@ public class MessageController {
     public Result delete(@RequestParam List<Long> ids) {
         log.info("批量删除留言：{}", ids);
         messageService.deleteByIds(ids);
-        return Result.success();
+        return Result.success("删除留言成功");
     }
 
     @GetMapping("/old")

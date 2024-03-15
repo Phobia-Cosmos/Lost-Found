@@ -13,6 +13,7 @@ import org.hnust.service.ItemService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -49,10 +50,6 @@ public class ItemController {
 
     @PutMapping("/finish")
     @ApiOperation("完成一项失物招领")
-    // 若使用RequestParam，则前端要使用query（URL）来进行参数的传递
-    // public Result finish(
-    //         @ApiParam(value = "ID of the item", required = true) @RequestParam Long id,
-    //         @ApiParam(value = "Status of the item", required = true) @RequestParam Integer status) {
     public Result finish(@RequestBody Map<String, Object> requestBody) {
         Long id = ((Number) requestBody.get("id")).longValue();
         Integer status = (Integer) requestBody.get("status");

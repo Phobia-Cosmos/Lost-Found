@@ -43,7 +43,37 @@ public class UserController {
         return Result.success("账号注册成功！");
     }
 
+    @PostMapping("/login")
+    @ApiOperation("用户登陆")
+    public Result<LoginVO> login(@RequestBody LoginDTO loginDTO) {
+        log.info("用户登录：{}", loginDTO);
+        User user = userService.login(loginDTO);
+
+        Map<String, Object> claims = new HashMap<>();
+        UserDTO userDTO = BeanUtil.copyProperties(user, UserDTO.class);
+
+        // claims.put(JwtClaimsConstant.USER_ID, user.getId());
+        // claims.put("Role", USER);
+        claims.put("user", userDTO);
+        String token = JwtUtil.createJWT(jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl(), claims);
+
+        LoginVO adminLoginVO = LoginVO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .name(user.getName())
+                .phone(user.getPhone())
+                .email(user.getEmail())
+                .avatar(user.getAvatar())
+                .reputation(user.getReputation())
+                .school(user.getSchool())
+                .token(token)
+                .build();
+
+        return Result.success(adminLoginVO, "用户登录成功");
+    }
+
     // TODO:这个也是Admin用户权限，用户只能删除自己的数据
+    // TODO：要加入一个字段，可以根据Username查询
     @DeleteMapping
     @ApiOperation("批量删除用户")
     public Result delete(@RequestParam List<Long> ids) {
@@ -84,38 +114,9 @@ public class UserController {
     @GetMapping("/page")
     @ApiOperation("用户分页查询")
     public Result<PageResult> page(UserPageQueryDTO userPageQueryDTO) {
+        userPageQueryDTO.setRole(USER);
         log.info("用户分页查询，参数为: {}", userPageQueryDTO);
         PageResult pageResult = userService.pageQuery(userPageQueryDTO);
         return Result.success(pageResult);
-    }
-
-    @PostMapping("/login")
-    @ApiOperation("用户登陆")
-    public Result<LoginVO> login(@RequestBody LoginDTO loginDTO) {
-        log.info("用户登录：{}", loginDTO);
-        User user = userService.login(loginDTO);
-
-        // JwtUtil jwtUtil = new JwtUtil(jwtProperties);
-        Map<String, Object> claims = new HashMap<>();
-        UserDTO userDTO = BeanUtil.copyProperties(user, UserDTO.class);
-
-        // claims.put(JwtClaimsConstant.USER_ID, user.getId());
-        // claims.put("Role", USER);
-        claims.put("user", userDTO);
-        String token = JwtUtil.createJWT(jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl(), claims);
-
-        LoginVO adminLoginVO = LoginVO.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .name(user.getName())
-                .phone(user.getPhone())
-                .email(user.getEmail())
-                .avatar(user.getAvatar())
-                .reputation(user.getReputation())
-                .school(user.getSchool())
-                .token(token)
-                .build();
-
-        return Result.success(adminLoginVO, "用户登录成功");
     }
 }

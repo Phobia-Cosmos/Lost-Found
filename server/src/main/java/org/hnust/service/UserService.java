@@ -30,6 +30,7 @@ public class UserService {
     @Resource
     private UserMapper userMapper;
 
+    // 用户必须提供三者之一，如果都没有则不能注册
     public void register(LoginDTO loginDTO, int role) {
         String phone = loginDTO.getPhone();
         String username = loginDTO.getUsername();
@@ -42,14 +43,7 @@ public class UserService {
         // TODO:校验Email或者phone格式，然后调取三方服务，验证码；这两个必须提供，否则不可以注册
         // TODO:可以改为注册完直接登陆，不用在单独登陆
 
-        // User checkUser = userMapper.selectByCriteria(username, phone, email);
-        // if (checkUser != null) {
-        //     throw new AccountAlreadyExistsException(MessageConstant.ALREADY_EXISTS);
-        // }
-
-        // Generate a random UUID as the salt
         String salt = UUID.randomUUID().toString();
-        // Combine salt and password
         String saltedPassword = password + salt;
         String hashedPassword = DigestUtils.md5DigestAsHex(saltedPassword.getBytes());
 
@@ -57,13 +51,14 @@ public class UserService {
         user.setSalt(salt);
         user.setPassword(hashedPassword);
         user.setReputation(0);
-        user.setRole(USER);
+        user.setRole(role);
         user.setCreateTime(Timestamp.valueOf(LocalDateTime.now()));
 
         userMapper.register(user);
     }
 
     // TODO：可能会存在危险，删除仅需要根据ID暂时
+    // TODO:这里暂时的逻辑是，即使id不存在也可以删除
     public void deleteByIds(List<Long> ids) {
         userMapper.deleteByIds(ids);
     }
@@ -122,7 +117,7 @@ public class UserService {
         // TODO:注意前端要传递员工ID参数
         Long userId = passwordEditDTO.getUserId();
         User user = userMapper.getById(userId);
-        if(userId == null){
+        if (userId == null) {
             throw new UserIdNotExistsException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
 
@@ -164,6 +159,10 @@ public class UserService {
     }
 
     private void validateInfo(String phone, String username, String email, String password) {
+    
+        if (StrUtil.isBlank(phone) && StrUtil.isBlank(username) && StrUtil.isBlank(email)) {
+            throw new InfoNotProvidedException(MessageConstant.INFO_NOT_PROVIDED);
+        }
         User byPhone = userMapper.selectByPhone(phone);
         if (byPhone != null) {
             throw new PhoneUsedException(MessageConstant.PHONE_ALREADY_EXISTS);
@@ -178,6 +177,7 @@ public class UserService {
         if (byEmail != null) {
             throw new EmailUsedException(MessageConstant.EMAIL_ALREADY_EXISTS);
         }
+
 
         if ((StrUtil.isBlank(password))) {
             throw new PasswordNotProvidedException(MessageConstant.PASSWORD_NOT_PROVIDED);

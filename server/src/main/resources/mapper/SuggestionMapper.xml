@@ -15,8 +15,8 @@
             <if test="pollCount != null">poll_count = #{pollCount},</if>
             <if test="content != null and content != ''">content = #{content},</if>
             <if test="status != null">status = #{status},</if>
-            <if test="validateMsg != null and validateMsg != ''">validateMsg = #{validateMsg},</if>
-            <if test="validatorId != null">validatorId = #{validatorId},</if>
+            <if test="validateMsg != null and validateMsg != ''">validate_msg = #{validateMsg},</if>
+            <if test="validatorId != null">validator_id = #{validatorId},</if>
         </set>
         WHERE id = #{id}
     </update>
@@ -28,29 +28,53 @@
         </foreach>
     </delete>
 
+    <!--    <select id="pageQuery" resultType="org.hnust.entity.Suggestion">-->
+    <!--        select * from suggestions-->
+    <!--        <where>-->
+    <!--            <if test="role == 1"> &lt;!&ndash; If role is USER &ndash;&gt;-->
+    <!--                and status != 1 &lt;!&ndash; Exclude suggestions with status USER &ndash;&gt;-->
+    <!--            </if>-->
+    <!--            <if test="userId != null">-->
+    <!--                and user_id = #{userId}-->
+    <!--            </if>-->
+    <!--            <if test="tag != null">-->
+    <!--                and tag = #{tag}-->
+    <!--            </if>-->
+    <!--            <if test="pollCount != null">-->
+    <!--                and poll_count &gt; #{pollCount}-->
+    <!--            </if>-->
+    <!--            <if test="status != null">-->
+    <!--                and status = #{status}-->
+    <!--            </if>-->
+    <!--            <if test="validatorId != null">-->
+    <!--                and validator_id = #{validatorId}-->
+    <!--            </if>-->
+    <!--        </where>-->
+    <!--        order by publish_time, poll_count desc-->
+    <!--    </select>-->
     <select id="pageQuery" resultType="org.hnust.entity.Suggestion">
         select * from suggestions
         <where>
             <if test="role == 1"> <!-- If role is USER -->
                 and status != 1 <!-- Exclude suggestions with status USER -->
             </if>
-            <if test="user_id != null">
-                and user_id = #{user_id}
+            <if test="query.userId != null">
+                and user_id = #{query.userId}
             </if>
-            <if test="tag != null">
-                and tag = #{tag}
+            <if test="query.tag != null">
+                and tag = #{query.tag}
             </if>
-            <if test="poll_count != null">
-                and poll_count &gt; #{poll_count}
+            <if test="query.pollCount != null">
+                and poll_count &gt; #{query.pollCount}
             </if>
-            <if test="status != null">
-                and status = #{status}
+            <if test="query.status != null">
+                and status = #{query.status}
             </if>
-            <if test="validatorId != null">
-                and validatorId = #{validatorId}
+            <if test="query.validatorId != null">
+                and validator_id = #{query.validatorId}
             </if>
         </where>
-        order by publishTime, poll_count desc
+        order by publish_time, poll_count desc
     </select>
 
 

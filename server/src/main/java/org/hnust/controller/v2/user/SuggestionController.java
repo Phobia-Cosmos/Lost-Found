@@ -15,7 +15,6 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
-import static org.hnust.constant.RoleConstant.MINE;
 import static org.hnust.constant.RoleConstant.USER;
 
 @RestController("UserSuggestionControllerV2")
@@ -60,8 +59,8 @@ public class SuggestionController {
     // 要先判断这个建议是不是自己的
     public Result delete(@RequestParam List<Long> ids) {
         log.info("用户{}批量删除{}号建议：", BaseContext.getCurrentUser().getUsername(), ids);
-        suggestionService.deleteByIds(ids);
-        return Result.success();
+        suggestionService.deleteByIds(ids, USER);
+        return Result.success("删除建议成功！");
     }
 
     @PutMapping("/voteUp")
@@ -99,12 +98,12 @@ public class SuggestionController {
     }
 
     // TODO:这里的逻辑和代码要修改
-    @GetMapping("/list")
-    @ApiOperation("用户分页查询自己的建议")
-    public Result<PageResult> list(@RequestBody SuggestionPageQueryDTO suggestionPageQueryDTO) {
-        log.info("用户分页查询建议，参数为: {}", suggestionPageQueryDTO);
-        PageResult pageResult = suggestionService.pageQuery(suggestionPageQueryDTO, MINE);
-        return Result.success(pageResult);
-    }
+    // @GetMapping("/list")
+    // @ApiOperation("用户分页查询自己的建议")
+    // public Result<PageResult> list(@RequestBody SuggestionPageQueryDTO suggestionPageQueryDTO) {
+    //     log.info("用户分页查询建议，参数为: {}", suggestionPageQueryDTO);
+    //     PageResult pageResult = suggestionService.pageQuery(suggestionPageQueryDTO, MINE);
+    //     return Result.success(pageResult);
+    // }
 
 }

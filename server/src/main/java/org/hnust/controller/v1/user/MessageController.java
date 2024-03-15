@@ -26,7 +26,7 @@ public class MessageController {
     @PostMapping
     @ApiOperation("用户留言")
     public Result publish(@RequestBody MessageDTO messageDTO) {
-        log.info("{}用户向用户{}留言...", messageDTO.getLostUserId(), messageDTO.getFoundUserId());
+        log.info("{}用户向用户{}留言...", messageDTO.getSender(), messageDTO.getReceiver());
         messageService.publish(messageDTO);
         return Result.success();
     }

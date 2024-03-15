@@ -72,10 +72,10 @@ public class SuggestionService {
     }
 
     // 要判断是不是自己的建议，前端也可以进行规范，就是非自己的建议不可以有删除按钮
-    public void deleteByIds(List<Long> ids) {
+    public void deleteByIds(List<Long> ids, int role) {
         for (Long id : ids) {
             Suggestion suggestion = isSuggestExists(id);
-            if (suggestion.getUserId() != BaseContext.getCurrentUser().getId()) {
+            if (role == USER && suggestion.getUserId() != BaseContext.getCurrentUser().getId()) {
                 throw new DeletionNotAllowedException(MessageConstant.DELETION_NOT_ALLOWED + ":" + id + "号建议");
             }
         }
@@ -109,44 +109,62 @@ public class SuggestionService {
         // if (voteType == null) {
         //     throw new SuggestionNotFoundException(MessageConstant.VOTE_NOT_FOUND);
         // }
-        // 建议表的点赞数单独操作
-        if (operation.equals(VOTEUP)) {
-            suggestion.setPollCount(pollCount + 1);
-        } else {
-            suggestion.setPollCount(pollCount - 1);
-        }
 
+        // 建议表的点赞数单独操作，但是也需要判断是否点过（不可以放到外部单独判断）；1-点赞；2-取消点赞
+        // 当我们点过赞后，无论如何操作，点赞数都应该减
         // TODO:现在的逻辑仅仅是修改点赞的状态，而不删除；后续可以换成删除
-        if (voteType == null) {
-            voterMapper.insert(id, userId, operation);
+        if (voteType == null || voteType == 0) {
+            log.info("null || 0");
+            if (voteType == null)
+                voterMapper.insert(id, userId, operation);
+            if (operation.equals(VOTEUP)) {
+                suggestion.setPollCount(pollCount + 1);
+                voterMapper.modify(id, userId, VOTEUP);
+            } else {
+                suggestion.setPollCount(pollCount - 1);
+                voterMapper.modify(id, userId, VOTEDOWN);
+            }
         } else if (voteType == 1) {
+            log.info("1");
+
+            // 用户之前是点过赞的状态，因此再次点击就是取消点赞或者差评
+            suggestion.setPollCount(pollCount - 1);
             // 更新操作一定要ID传入，否则会导致所有数据被更新
             if (operation.equals(VOTEUP)) {
+                // 如果是再次点赞，则状态更新为未操作
                 voterMapper.modify(id, userId, NONE);
             } else {
                 voterMapper.modify(id, userId, VOTEDOWN);
             }
         } else {
+            log.info("2");
+
+            // 用户之前是差评的状态，因此再次点击就是取消差评或者点赞
+            suggestion.setPollCount(pollCount + 1);
             if (operation.equals(VOTEUP)) {
                 voterMapper.modify(id, userId, VOTEUP);
             } else {
                 voterMapper.modify(id, userId, NONE);
             }
         }
-
+        log.info("票数为：" + suggestion.getPollCount() + "");
         return suggestion;
     }
 
     public PageResult pageQuery(SuggestionPageQueryDTO suggestionPageQueryDTO, Integer role) {
         PageHelper.startPage(suggestionPageQueryDTO.getPage(), suggestionPageQueryDTO.getPageSize());
+        log.info("分页查询参数为{}", suggestionPageQueryDTO);
         Page<Suggestion> page = suggestionMapper.pageQuery(suggestionPageQueryDTO, role);
         return new PageResult(page.getTotal(), page.getResult());
     }
 
-    public void validate(Long id, Integer status) {
+    public void validate(Long id, Integer status, String msg) {
+        isSuggestExists(id);
         Suggestion suggestion = Suggestion.builder()
                 .id(id)
                 .status(status)
+                .validateMsg(msg)
+                .validatorId(BaseContext.getCurrentUser().getId())
                 .build();
 
         suggestionMapper.update(suggestion);

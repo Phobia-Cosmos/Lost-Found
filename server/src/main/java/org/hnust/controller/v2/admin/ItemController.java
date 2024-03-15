@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
+import java.util.Map;
+
 import static org.hnust.constant.RoleConstant.ADMIN;
 
 @Slf4j
@@ -24,7 +26,9 @@ public class ItemController {
 
     @PutMapping("/validate")
     @ApiOperation("管理员审核建议")
-    public Result validate(@RequestParam Long id, @RequestParam Integer status) {
+    public Result validate(@RequestBody Map<String, Object> requestBody) {
+        Long id = ((Number) requestBody.get("id")).longValue();
+        Integer status = (Integer) requestBody.get("status");
         log.info("管理员{}正在审核{}号物品...", BaseContext.getCurrentUser().getUsername(), id);
         itemService.validate(id, status);
         return Result.success();

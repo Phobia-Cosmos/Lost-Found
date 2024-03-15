@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
+import java.util.Map;
+
 import static org.hnust.constant.RoleConstant.ADMIN;
 
 @RestController("AdminSuggestionControllerV2")
@@ -34,9 +36,12 @@ public class SuggestionController {
     @PutMapping("/validate")
     @ApiOperation("管理员审核建议")
     // TODO：要不要加一个审核时间字段？
-    public Result validate(@RequestParam Long id, @RequestParam Integer status) {
+    public Result validate(@RequestBody Map<String, Object> requestBody) {
+        Long id = ((Number) requestBody.get("id")).longValue();
+        Integer status = (Integer) requestBody.get("status");
+        String msg = (String) requestBody.get("msg");
         log.info("管理员{}正在审核{}号建议...", BaseContext.getCurrentUser().getUsername(), id);
-        suggestionService.validate(id, status);
+        suggestionService.validate(id, status, msg);
         return Result.success();
     }
 

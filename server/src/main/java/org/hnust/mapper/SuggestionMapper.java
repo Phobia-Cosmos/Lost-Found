@@ -3,6 +3,7 @@ package org.hnust.mapper;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.hnust.dto.SuggestionPageQueryDTO;
 import org.hnust.entity.Suggestion;
@@ -24,5 +25,6 @@ public interface SuggestionMapper {
     @Select("SELECT * from suggestions where id = #{id}")
     Suggestion getById(Long id);
 
-    Page<Suggestion> pageQuery(SuggestionPageQueryDTO suggestionPageQueryDTO, Integer role);
+    Page<Suggestion> pageQuery(@Param("query") SuggestionPageQueryDTO suggestionPageQueryDTO,
+                               @Param("role") Integer role);
 }

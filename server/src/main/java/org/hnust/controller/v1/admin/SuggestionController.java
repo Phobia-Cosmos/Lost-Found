@@ -36,7 +36,7 @@ public class SuggestionController {
     // TODO：要不要加一个审核时间字段？
     public Result validate(@RequestParam Long id, @RequestParam Integer status) {
         log.info("管理员{}正在审核{}号建议...", BaseContext.getCurrentUser().getUsername(), id);
-        suggestionService.validate(id, status);
+        suggestionService.validate(id, status, "msg");
         return Result.success();
     }
 

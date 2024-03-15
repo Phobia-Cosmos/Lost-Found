@@ -3,6 +3,7 @@ package org.hnust.mapper;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.hnust.dto.ItemPageDTO;
 import org.hnust.entity.Item;
@@ -22,7 +23,7 @@ public interface ItemMapper {
 
     void deleteByIds(List<Long> ids);
 
-    Page<Item> pageQuery(ItemPageDTO itemPageDTO, Integer role);
+    Page<Item> pageQuery(@Param("query") ItemPageDTO itemPageDTO, @Param("role") Integer role);
 
     @Select("select * from items where id = #{id}")
     Item getById(Long id);

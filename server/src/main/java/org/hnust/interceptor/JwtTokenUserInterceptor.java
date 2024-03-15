@@ -25,7 +25,9 @@ public class JwtTokenUserInterceptor implements HandlerInterceptor {
     // 注意：这里只要是我们以前测试的token都可以使用，比如我们以前使用过期时间很长的token，则这里会一直存留不会过期；
     // TODO：为什么我在JSON Web Token修改了我的token中的数据部分（这个token已经时不一样的了），为什么我还可以通过token校验？
     // 上方使用修改的token去校验后，得到的claims就是我们修改后的数据。所以说只要我们的claims数据不同，token就会一定不同。
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+    // TODO:因此如果说数据部分不一样，则说明我们的Token密钥已被获取，建议立刻修改；或者我们需要将Token存在redis或者session中才可以保证token和数据的安全性
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         // 判断当前拦截到的是Controller的方法还是其他资源
         if (!(handler instanceof HandlerMethod)) {
             // 当前拦截到的不是动态方法，直接放行
@@ -68,6 +70,7 @@ public class JwtTokenUserInterceptor implements HandlerInterceptor {
             }
 
             BaseContext.setCurrentUser(userDTO);
+            log.info("当前用户信息：{}", BaseContext.getCurrentUser());
             return true;
         } catch (Exception ex) {
             log.info(ex.getMessage());

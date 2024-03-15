@@ -18,6 +18,14 @@ mybatis:
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
 
+logging:
+  level:
+    org:
+      hnust:
+        mapper: debug
+        service: info
+        controller: info
+
 pagehelper:
   helper-dialect: mysql
   reasonable: true

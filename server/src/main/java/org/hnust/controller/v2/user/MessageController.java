@@ -1,4 +1,4 @@
-package org.hnust.controller.user;
+package org.hnust.controller.v2.user;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
 
-@RestController
-@RequestMapping("/user/message")
+@RestController("MessageControllerV2")
+@RequestMapping("/user/v2/message")
 @Slf4j
 @Api(tags = "用户端留言相关接口")
 public class MessageController {

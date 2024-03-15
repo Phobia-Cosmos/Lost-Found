@@ -41,6 +41,7 @@ public class UserService {
 
         // TODO:校验Email或者phone格式，然后调取三方服务，验证码；这两个必须提供，否则不可以注册
         // TODO:可以改为注册完直接登陆，不用在单独登陆
+
         // User checkUser = userMapper.selectByCriteria(username, phone, email);
         // if (checkUser != null) {
         //     throw new AccountAlreadyExistsException(MessageConstant.ALREADY_EXISTS);
@@ -106,9 +107,13 @@ public class UserService {
     public void update(UserDTO userDTO) {
         // 这里不可能出现不存在的用户，因为我们的Id都是在前端限定了；但是我们还是可以加一层保险
         User byId = userMapper.getById(userDTO.getId());
-        if(byId == null){
+        if (byId == null) {
             throw new UserIdNotExistsException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
+        String username = userDTO.getUsername();
+        String phone = userDTO.getPhone();
+        String email = userDTO.getEmail();
+        validateInfo(phone, username, email, "password");
         User user = BeanUtil.copyProperties(userDTO, User.class);
         userMapper.update(user);
     }
@@ -140,6 +145,9 @@ public class UserService {
     // 用户和管理员存在一张表，ID不相同
     public User getById(Long id) {
         User user = userMapper.getById(id);
+        if (user == null) {
+            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
+        }
         user.setPassword("****");
         user.setSalt("****");
         return user;

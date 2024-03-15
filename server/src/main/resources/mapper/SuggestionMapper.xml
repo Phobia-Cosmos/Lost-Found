@@ -7,10 +7,13 @@
     <update id="update" parameterType="Suggestion">
         UPDATE lost_found.suggestions
         <set>
-            <if test="userId != null">user_id = #{userId},</if>
+            <!--            <if test="role == 1"> &lt;!&ndash; If role is USER &ndash;&gt;-->
+            <!--                and user_id = #{userId}-->
+            <!--            </if>-->
+            <!--            <if test="userId != null">user_id = #{userId},</if>-->
             <if test="tag != null">tag = #{tag},</if>
-            <if test="poll_count != null">poll_count = #{poll_count},</if>
-            <if test="content != null and content != ''">status = #{status},</if>
+            <if test="pollCount != null">poll_count = #{pollCount},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
             <if test="status != null">status = #{status},</if>
             <if test="validateMsg != null and validateMsg != ''">validateMsg = #{validateMsg},</if>
             <if test="validatorId != null">validatorId = #{validatorId},</if>

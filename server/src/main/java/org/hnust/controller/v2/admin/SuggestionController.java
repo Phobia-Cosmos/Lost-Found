@@ -1,4 +1,4 @@
-package org.hnust.controller.admin;
+package org.hnust.controller.v2.admin;
 
 
 import io.swagger.annotations.Api;
@@ -15,8 +15,8 @@ import javax.annotation.Resource;
 
 import static org.hnust.constant.RoleConstant.ADMIN;
 
-@RestController("AdminSuggestionController")
-@RequestMapping("/admin/suggest")
+@RestController("AdminSuggestionControllerV2")
+@RequestMapping("/admin/v2/suggest")
 @Slf4j
 @Api(tags = "管理端建议相关接口")
 public class SuggestionController {
@@ -33,6 +33,7 @@ public class SuggestionController {
 
     @PutMapping("/validate")
     @ApiOperation("管理员审核建议")
+    // TODO：要不要加一个审核时间字段？
     public Result validate(@RequestParam Long id, @RequestParam Integer status) {
         log.info("管理员{}正在审核{}号建议...", BaseContext.getCurrentUser().getUsername(), id);
         suggestionService.validate(id, status);

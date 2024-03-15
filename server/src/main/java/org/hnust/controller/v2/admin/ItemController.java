@@ -1,11 +1,10 @@
-package org.hnust.controller.admin;
+package org.hnust.controller.v2.admin;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.hnust.context.BaseContext;
 import org.hnust.dto.ItemPageDTO;
-import org.hnust.dto.SuggestionPageQueryDTO;
 import org.hnust.result.PageResult;
 import org.hnust.result.Result;
 import org.hnust.service.ItemService;
@@ -16,8 +15,8 @@ import javax.annotation.Resource;
 import static org.hnust.constant.RoleConstant.ADMIN;
 
 @Slf4j
-@RestController("AdminItemController")
-@RequestMapping("/admin/item")
+@RestController("AdminItemControllerV2")
+@RequestMapping("/admin/v2/item")
 @Api(tags = "管理端失物招领相关接口")
 public class ItemController {
     @Resource

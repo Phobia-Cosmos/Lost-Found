@@ -20,13 +20,13 @@ public interface UserMapper {
 
     void update(User user);
 
-    @Select("SELECT * FROM users WHERE username IS NOT NULL AND username != '' AND username = #{username}")
+    @Select("SELECT * FROM users WHERE username IS NOT NULL AND username != '' AND BINARY username = #{username}")
     User selectByUsername(String username);
 
-    @Select("SELECT * FROM users WHERE phone IS NOT NULL AND phone != '' AND phone = #{phone}")
+    @Select("SELECT * FROM users WHERE phone IS NOT NULL AND phone != '' AND BINARY phone = #{phone}")
     User selectByPhone(String phone);
 
-    @Select("SELECT * FROM users WHERE email IS NOT NULL AND email != '' AND email = #{email}")
+    @Select("SELECT * FROM users WHERE email IS NOT NULL AND email != '' AND BINARY email = #{email}")
     User selectByEmail(String email);
 
 

@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 public class Suggestion {
     private Long id;
     private Long userId;
-    private Integer tag; // 需要人为设置值来指代意义
+    private Integer tag; // 需要人为设置值来指代意义；0:平台界面；1:平台功能
     private Integer pollCount;
     private String content;
     private Integer status;     // 0:未审核，1:审核失败，2:待解决，3：已解决

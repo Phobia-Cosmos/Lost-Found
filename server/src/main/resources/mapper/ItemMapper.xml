@@ -28,6 +28,7 @@
         </foreach>
     </delete>
 
+<!--    TODO：日期范围未规定-->
     <select id="pageQuery" resultType="Item">
         select * from items
         <where>

@@ -1,4 +1,4 @@
-package org.hnust.controller.admin;
+package org.hnust.controller.v1.admin;
 
 import cn.hutool.core.bean.BeanUtil;
 import io.swagger.annotations.Api;
@@ -24,7 +24,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/admin/user")
+@RequestMapping("/admin/v1/user")
 @Api(tags = "管理端信息相关接口")
 public class AdminController {
 

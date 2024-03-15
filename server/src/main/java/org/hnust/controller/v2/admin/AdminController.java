@@ -1,4 +1,4 @@
-package org.hnust.controller.user;
+package org.hnust.controller.v2.admin;
 
 import cn.hutool.core.bean.BeanUtil;
 import io.swagger.annotations.Api;
@@ -12,7 +12,7 @@ import org.hnust.entity.User;
 import org.hnust.properties.JwtProperties;
 import org.hnust.result.PageResult;
 import org.hnust.result.Result;
-import org.hnust.service.UserService;
+import org.hnust.service.AdminService;
 import org.hnust.utils.JwtUtil;
 import org.hnust.vo.LoginVO;
 import org.springframework.web.bind.annotation.*;
@@ -22,84 +22,83 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hnust.constant.RoleConstant.USER;
-
-@RestController
 @Slf4j
-@Api(tags = "用户端信息相关接口")
-@RequestMapping("/user/user")
-public class UserController {
+@RestController("AdminControllerV2")
+@RequestMapping("/admin/v2/user")
+@Api(tags = "管理端信息相关接口")
+public class AdminController {
 
     @Resource
-    private UserService userService;
+    private AdminService adminService;
     @Resource
     private JwtProperties jwtProperties;
 
-    @PostMapping("/register")
-    @ApiOperation("新增用户")
+    @PostMapping
+    @ApiOperation("新增管理员")
     public Result register(@RequestBody LoginDTO loginDTO) {
-        log.info("新增用户: {}", loginDTO);
-        userService.register(loginDTO, USER);
-        return Result.success("账号注册成功！");
+        log.info("新增管理员: {}", loginDTO);
+        adminService.register(loginDTO);
+        return Result.success();
     }
 
-    // TODO:这个也是Admin用户权限，用户只能删除自己的数据
     @DeleteMapping
-    @ApiOperation("批量删除用户")
+    @ApiOperation("批量删除管理员")
     public Result delete(@RequestParam List<Long> ids) {
-        log.info("批量删除用户：{}", ids);
-        userService.deleteByIds(ids);
-        return Result.success("批量删除了" + ids + "用户");
+        log.info("批量删除管理员：{}", ids);
+        adminService.deleteByIds(ids);
+        return Result.success();
     }
 
-    // 注意：更新一定要传递特定的ID，如果我们不指定ID，这表中所有数据一起被更新
     @PutMapping
-    @ApiOperation("编辑用户信息")
+    @ApiOperation("编辑管理员信息")
     public Result update(@RequestBody UserDTO userDTO) {
-        log.info("编辑用户信息, {}", userDTO);
-        userService.update(userDTO);
-        return Result.success("修改信息成功");
+        log.info("编辑管理员信息, {}", userDTO);
+        adminService.update(userDTO);
+        return Result.success();
     }
 
     @PutMapping("editPassword")
     @ApiOperation("修改密码")
     public Result editPassword(@RequestBody PasswordEditDTO passwordEditDTO) {
-        log.info("修改{}号用户密码...", passwordEditDTO.getUserId());
-        userService.editPassword(passwordEditDTO);
-        return Result.success("修改密码成功");
+        log.info("修改{}号管理员密码...", passwordEditDTO.getUserId());
+        adminService.editPassword(passwordEditDTO);
+        return Result.success();
     }
 
     @GetMapping("{id}")
-    @ApiOperation("根据id查询用户")
+    @ApiOperation("根据id查询管理员")
     public Result<User> getById(@PathVariable Long id) {
-        log.info("查询{}号用户...", id);
-        User user = userService.getById(id);
+        log.info("查询{}号管理员...", id);
+        User user = adminService.getById(id);
         return Result.success(user);
     }
 
-    // TODO：这个应该是Admin的权限吧，要修改！
     @GetMapping("/page")
-    @ApiOperation("用户分页查询")
+    @ApiOperation("管理员分页查询")
     public Result<PageResult> page(UserPageQueryDTO userPageQueryDTO) {
-        log.info("用户分页查询，参数为: {}", userPageQueryDTO);
-        PageResult pageResult = userService.pageQuery(userPageQueryDTO);
+        log.info("管理员分页查询，参数为: {}", userPageQueryDTO);
+        PageResult pageResult = adminService.pageQuery(userPageQueryDTO);
         return Result.success(pageResult);
     }
 
     @PostMapping("/login")
-    @ApiOperation("用户登陆")
+    @ApiOperation("管理员登陆")
     public Result<LoginVO> login(@RequestBody LoginDTO loginDTO) {
-        log.info("用户登录：{}", loginDTO);
-        User user = userService.login(loginDTO);
+        log.info("管理员登录：{}", loginDTO);
+        User user = adminService.login(loginDTO);
 
         // JwtUtil jwtUtil = new JwtUtil(jwtProperties);
         Map<String, Object> claims = new HashMap<>();
         UserDTO userDTO = BeanUtil.copyProperties(user, UserDTO.class);
 
-        // claims.put(JwtClaimsConstant.USER_ID, user.getId());
-        // claims.put("Role", USER);
+        // 把用户ID存ThreadLocal中，后续不用查询
+        // claims.put(JwtClaimsConstant.ADMIN_ID, user.getId());
+        // claims.put("Role", ADMIN);
         claims.put("user", userDTO);
-        String token = JwtUtil.createJWT(jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl(), claims);
+        String token = JwtUtil.createJWT(
+                jwtProperties.getAdminSecretKey(),
+                jwtProperties.getAdminTtl(),
+                claims);
 
         LoginVO adminLoginVO = LoginVO.builder()
                 .id(user.getId())
@@ -113,6 +112,6 @@ public class UserController {
                 .token(token)
                 .build();
 
-        return Result.success(adminLoginVO, "用户登录成功");
+        return Result.success(adminLoginVO);
     }
 }

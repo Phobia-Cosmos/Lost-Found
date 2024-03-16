@@ -12,6 +12,7 @@
         <module>pojo</module>
         <module>common</module>
         <module>server</module>
+        <module>starter</module>
     </modules>
 
     <parent>

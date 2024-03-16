@@ -10,14 +10,20 @@ import org.hnust.dto.ItemPageDTO;
 import org.hnust.entity.Item;
 import org.hnust.exception.ItemNotFoundException;
 import org.hnust.exception.OperationNotAllowedException;
+import org.hnust.exception.ParamInvalidException;
+import org.hnust.file.service.FileStorageService;
 import org.hnust.mapper.ItemMapper;
 import org.hnust.result.PageResult;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static org.hnust.constant.ItemConstant.WAITING;
 
@@ -27,6 +33,9 @@ public class ItemService {
 
     @Resource
     private ItemMapper itemMapper;
+
+    @Resource
+    private FileStorageService fileStorageService;
 
     // 如果没有设置起始和结束时间，则默认为当前时间
     // TODO:判断用户是否存在
@@ -92,7 +101,7 @@ public class ItemService {
 
     public void validate(Long id, Integer status) {
         isItemExists(id);
-        if(status>3 || status<0){
+        if (status > 3 || status < 0) {
             throw new OperationNotAllowedException(MessageConstant.OPERATION_NOT_ALLOWED);
         }
         Item item = Item.builder()
@@ -100,5 +109,26 @@ public class ItemService {
                 .status(status)
                 .build();
         itemMapper.update(item);
+    }
+
+    public String uploadPicture(MultipartFile multipartFile) {
+        if (multipartFile == null || multipartFile.getSize() == 0) {
+            throw new ParamInvalidException(MessageConstant.PARAM_INVALID);
+        }
+
+        String fileName = UUID.randomUUID().toString().replace("-", "");
+        String originalFilename = multipartFile.getOriginalFilename();
+        String postfix = originalFilename.substring(originalFilename.lastIndexOf("."));
+        String fileId = null;
+        try {
+            fileId = fileStorageService.uploadImgFile("", fileName + postfix, multipartFile.getInputStream());
+            log.info("上传图片到MinIO中，fileId:{}", fileId);
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("WmMaterialServiceImpl-上传文件失败");
+        }
+
+        // 3.保存到数据库中
+        return fileId;
     }
 }

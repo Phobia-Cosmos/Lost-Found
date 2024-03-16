@@ -27,6 +27,8 @@ public class MessageConstant {
 
     public static final String MESSAGE_DELETION_NOT_ALLOWED = "不允许删除他人的留言";
     public static final String OPERATION_NOT_ALLOWED = "审核操作不再范围内";
+    public static final String PARAM_INVALID = "参数无效";
+
 
 
     public static final String LOGIN_FAILED = "登录失败";

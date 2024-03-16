@@ -2,6 +2,7 @@ package org.hnust.controller.v2.user;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.hnust.context.BaseContext;
 import org.hnust.dto.ItemDTO;
@@ -11,9 +12,9 @@ import org.hnust.result.PageResult;
 import org.hnust.result.Result;
 import org.hnust.service.ItemService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +37,15 @@ public class ItemController {
                 "失物");
         itemService.publish(itemDTO);
         return Result.success();
+    }
+
+    @PostMapping("/upload")
+    @ApiOperation("上传照片")
+    // TODO:如何使用这个MultipartFile获取文件名？
+    public Result upload(@ApiParam(value = "失物招领图片", required = true) @RequestPart("file") MultipartFile multipartFile) {
+        log.info("{}用户上传了{}照片", BaseContext.getCurrentUser().getUsername(), multipartFile.getOriginalFilename());
+        String pictureURL = itemService.uploadPicture(multipartFile);
+        return Result.success(pictureURL, "上传照片成功！");
     }
 
     @PutMapping

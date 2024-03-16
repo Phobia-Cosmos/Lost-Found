@@ -34,6 +34,13 @@ pagehelper:
 
 ip: localhost
 
+minio:
+  accessKey: minio
+  secretKey: minio123
+  bucket: lostfound
+  endpoint: http://118.25.40.159:9090
+  readPath: http://118.25.40.159:9090
+
 jwt:
   admin-secret-key: lost&found
   admin-ttl: 60000000

@@ -52,9 +52,7 @@ public class UserController {
         Map<String, Object> claims = new HashMap<>();
         UserDTO userDTO = BeanUtil.copyProperties(user, UserDTO.class);
 
-        // claims.put(JwtClaimsConstant.USER_ID, user.getId());
-        // claims.put("Role", USER);
-        claims.put("user", userDTO);
+        claims.put(jwtProperties.getUserTokenName(), userDTO);
         String token = JwtUtil.createJWT(jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl(), claims);
 
         LoginVO adminLoginVO = LoginVO.builder()
@@ -66,6 +64,7 @@ public class UserController {
                 .avatar(user.getAvatar())
                 .reputation(user.getReputation())
                 .school(user.getSchool())
+                .role(USER)
                 .token(token)
                 .build();
 
@@ -107,16 +106,5 @@ public class UserController {
         log.info("查询{}号用户...", id);
         User user = userService.getById(id);
         return Result.success(user);
-    }
-
-    // TODO：这个应该是Admin的权限吧，要修改！
-    // TODO：这里不可以使用User作为返回信息，我们不能将数据库字段暴露！要使用VO
-    @GetMapping("/page")
-    @ApiOperation("用户分页查询")
-    public Result<PageResult> page(UserPageQueryDTO userPageQueryDTO) {
-        userPageQueryDTO.setRole(USER);
-        log.info("用户分页查询，参数为: {}", userPageQueryDTO);
-        PageResult pageResult = userService.pageQuery(userPageQueryDTO);
-        return Result.success(pageResult);
     }
 }

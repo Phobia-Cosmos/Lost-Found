@@ -21,7 +21,6 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -130,5 +129,9 @@ public class ItemService {
 
         // 3.保存到数据库中
         return fileId;
+    }
+
+    public List<Item> getAll() {
+        return itemMapper.selectAll();
     }
 }

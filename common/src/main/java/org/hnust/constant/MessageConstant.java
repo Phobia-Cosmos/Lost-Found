@@ -26,6 +26,9 @@ public class MessageConstant {
     public static final String DELETION_NOT_ALLOWED = "不允许删除他人的建议";
 
     public static final String MESSAGE_DELETION_NOT_ALLOWED = "不允许删除他人的留言";
+
+    public static final String USER_INVALID = "用户信息不正确，只能操作自己的数据哦";
+
     public static final String OPERATION_NOT_ALLOWED = "审核操作不再范围内";
     public static final String PARAM_INVALID = "参数无效";
 

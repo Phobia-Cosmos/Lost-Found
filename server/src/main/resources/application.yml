@@ -43,9 +43,9 @@ minio:
 
 jwt:
   admin-secret-key: lost&found
-  admin-ttl: 60000000
+  admin-ttl: 60000000000
   admin-token-name: token
 
   user-secret-key: lost&found
-  user-ttl: 60000000
+  user-ttl: 60000000000
   user-token-name: authentication

@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.hnust.constant.MessageConstant;
+import org.hnust.context.BaseContext;
 import org.hnust.dto.LoginDTO;
 import org.hnust.dto.PasswordEditDTO;
 import org.hnust.dto.UserDTO;
@@ -14,6 +15,7 @@ import org.hnust.entity.User;
 import org.hnust.exception.*;
 import org.hnust.mapper.UserMapper;
 import org.hnust.result.PageResult;
+import org.hnust.vo.UserVO;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
@@ -21,8 +23,6 @@ import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import static org.hnust.constant.RoleConstant.USER;
 
 
 @Service
@@ -57,9 +57,11 @@ public class UserService {
         userMapper.register(user);
     }
 
-    // TODO：可能会存在危险，删除仅需要根据ID暂时
-    // TODO:这里暂时的逻辑是，即使id不存在也可以删除
+    // 不可以有管理员删除管理员或者用户，只能由个人注销自己的账户，因此不需要批量删除
     public void deleteByIds(List<Long> ids) {
+        for (Long id : ids) {
+            isUserValid(id);
+        }
         userMapper.deleteByIds(ids);
     }
 
@@ -79,9 +81,7 @@ public class UserService {
             user = userMapper.selectByUsername(username);
         }
 
-        // 2、处理各种异常情况（用户名不存在、密码不对、账号被锁定）
         if (user == null) {
-            // 账号不存在
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
 
@@ -105,6 +105,8 @@ public class UserService {
         if (byId == null) {
             throw new UserIdNotExistsException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
+        isUserValid(byId.getId());
+
         String username = userDTO.getUsername();
         String phone = userDTO.getPhone();
         String email = userDTO.getEmail();
@@ -120,6 +122,7 @@ public class UserService {
         if (userId == null) {
             throw new UserIdNotExistsException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
+        isUserValid(userId);
 
         String oldPassword = passwordEditDTO.getOldPassword();
         String newPassword = passwordEditDTO.getNewPassword();
@@ -137,29 +140,35 @@ public class UserService {
         userMapper.update(newUser);
     }
 
-    // 用户和管理员存在一张表，ID不相同
+    // 用户和管理员存在一张表，ID不相同；不论是用户还是管理员，如果查询个人信息，就只能查自己的
     public User getById(Long id) {
         User user = userMapper.getById(id);
         if (user == null) {
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
+        isUserValid(user.getId());
+
         user.setPassword("****");
         user.setSalt("****");
         return user;
     }
 
+    // 这里只有管理员可以操作，但是管理员不可以点击用户的详细信息；这个方法只暴露给Admin，Admin可以看到所有详细信息，但是不可以查询单个
+    // 用户不存在分页查询接口
     public PageResult pageQuery(UserPageQueryDTO userPageQueryDTO) {
         PageHelper.startPage(userPageQueryDTO.getPage(), userPageQueryDTO.getPageSize());
-        Page<User> page = userMapper.pageQuery(userPageQueryDTO);
-        for (User user : page) {
-            user.setPassword("***");
-            user.setSalt("****");
-        }
+        Page<UserVO> page = userMapper.pageQuery(userPageQueryDTO);
         return new PageResult(page.getTotal(), page.getResult());
     }
 
+    private static void isUserValid(Long id) {
+        if (id != BaseContext.getCurrentUser().getId()) {
+            throw new ModificationNotAllowedException(MessageConstant.USER_INVALID);
+        }
+    }
+
     private void validateInfo(String phone, String username, String email, String password) {
-    
+
         if (StrUtil.isBlank(phone) && StrUtil.isBlank(username) && StrUtil.isBlank(email)) {
             throw new InfoNotProvidedException(MessageConstant.INFO_NOT_PROVIDED);
         }
@@ -177,7 +186,6 @@ public class UserService {
         if (byEmail != null) {
             throw new EmailUsedException(MessageConstant.EMAIL_ALREADY_EXISTS);
         }
-
 
         if ((StrUtil.isBlank(password))) {
             throw new PasswordNotProvidedException(MessageConstant.PASSWORD_NOT_PROVIDED);

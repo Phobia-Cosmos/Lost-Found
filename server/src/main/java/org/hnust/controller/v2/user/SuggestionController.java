@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.hnust.context.BaseContext;
 import org.hnust.dto.SuggestionDTO;
 import org.hnust.dto.SuggestionPageQueryDTO;
+import org.hnust.entity.Item;
+import org.hnust.entity.Suggestion;
 import org.hnust.result.PageResult;
 import org.hnust.result.Result;
 import org.hnust.service.SuggestionService;
@@ -95,6 +97,13 @@ public class SuggestionController {
         log.info("用户分页查询建议，参数为: {}", suggestionPageQueryDTO);
         PageResult pageResult = suggestionService.pageQuery(suggestionPageQueryDTO, USER);
         return Result.success(pageResult);
+    }
+
+    @GetMapping("{id}")
+    @ApiOperation("用户根据id查询建议")
+    public Result<Suggestion> getById(@PathVariable Long id) {
+        Suggestion suggestion = suggestionService.getById(id);
+        return Result.success(suggestion);
     }
 
     // TODO:这里的逻辑和代码要修改

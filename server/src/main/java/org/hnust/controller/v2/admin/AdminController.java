@@ -52,7 +52,7 @@ public class AdminController {
         Map<String, Object> claims = new HashMap<>();
         UserDTO userDTO = BeanUtil.copyProperties(user, UserDTO.class);
 
-        claims.put("admin", userDTO);
+        claims.put(jwtProperties.getAdminTokenName(), userDTO);
         String token = JwtUtil.createJWT(
                 jwtProperties.getAdminSecretKey(),
                 jwtProperties.getAdminTtl(),
@@ -67,15 +67,16 @@ public class AdminController {
                 .avatar(user.getAvatar())
                 .reputation(user.getReputation())
                 .school(user.getSchool())
+                .role(ADMIN)
                 .token(token)
                 .build();
 
-        return Result.success(adminLoginVO, "用户登录成功");
+        return Result.success(adminLoginVO, "管理员登录成功");
     }
 
     @DeleteMapping
     @ApiOperation("批量删除管理员")
-    // TODO:这个接口好像不太需要，而且未做规范！
+    // 不可以有管理员删除管理员或者用户，只能由个人注销自己的账户，因此不需要批量删除
     public Result delete(@RequestParam List<Long> ids) {
         log.info("批量删除管理员：{}", ids);
         userService.deleteByIds(ids);
@@ -108,6 +109,7 @@ public class AdminController {
 
     @GetMapping("/page")
     @ApiOperation("管理员分页查询")
+    // TODO：这里不可以使用User作为返回信息，我们不能将数据库字段暴露！要使用VO
     // 注意：前端一定要限制显示，否则管理员就可以操作用户数据了
     public Result<PageResult> page(UserPageQueryDTO userPageQueryDTO) {
         userPageQueryDTO.setRole(ADMIN);

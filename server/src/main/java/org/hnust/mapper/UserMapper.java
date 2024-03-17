@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.hnust.dto.UserPageQueryDTO;
 import org.hnust.entity.User;
+import org.hnust.vo.UserVO;
 
 import java.util.List;
 
@@ -33,6 +34,6 @@ public interface UserMapper {
     @Select("select * from users where id IS NOT NULL AND id = #{id}")
     User getById(Long id);
 
-    Page<User> pageQuery(UserPageQueryDTO userPageQueryDTO);
+    Page<UserVO> pageQuery(UserPageQueryDTO userPageQueryDTO);
 
 }

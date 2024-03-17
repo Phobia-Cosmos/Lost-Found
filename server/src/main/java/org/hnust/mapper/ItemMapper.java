@@ -27,4 +27,7 @@ public interface ItemMapper {
 
     @Select("select * from items where id = #{id}")
     Item getById(Long id);
+
+    @Select("SELECT * FROM items")
+    List<Item> selectAll();
 }

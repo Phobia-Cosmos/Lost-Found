@@ -169,4 +169,8 @@ public class SuggestionService {
 
         suggestionMapper.update(suggestion);
     }
+
+    public Suggestion getById(Long id) {
+        return isSuggestExists(id);
+    }
 }

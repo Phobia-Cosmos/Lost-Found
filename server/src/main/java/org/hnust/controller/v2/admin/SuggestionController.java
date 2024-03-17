@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.hnust.context.BaseContext;
 import org.hnust.dto.SuggestionPageQueryDTO;
+import org.hnust.entity.Item;
+import org.hnust.entity.Suggestion;
 import org.hnust.result.PageResult;
 import org.hnust.result.Result;
 import org.hnust.service.SuggestionService;
@@ -43,6 +45,13 @@ public class SuggestionController {
         log.info("管理员{}正在审核{}号建议...", BaseContext.getCurrentUser().getUsername(), id);
         suggestionService.validate(id, status, msg);
         return Result.success();
+    }
+
+    @GetMapping("{id}")
+    @ApiOperation("管理员根据id查询建议")
+    public Result<Suggestion> getById(@PathVariable Long id) {
+        Suggestion suggestion = suggestionService.getById(id);
+        return Result.success(suggestion);
     }
 
 }

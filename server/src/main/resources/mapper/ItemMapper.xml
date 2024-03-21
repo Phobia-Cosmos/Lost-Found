@@ -44,10 +44,10 @@
                 and tag = #{query.tag}
             </if>
             <if test="query.userId != null">
-                and userId = #{query.userId}
+                and user_id = #{query.userId}
             </if>
             <if test="query.isLost != null">
-                and isLost = #{query.isLost}
+                and is_lost = #{query.isLost}
             </if>
         </where>
         order by end_time asc , start_time desc

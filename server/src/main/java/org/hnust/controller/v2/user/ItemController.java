@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
+import static org.hnust.constant.ItemConstant.COMPLETE;
 import static org.hnust.constant.RoleConstant.USER;
 
 @RestController("UserItemControllerV2")
@@ -36,7 +37,7 @@ public class ItemController {
         log.info("{}用户发表了{}", BaseContext.getCurrentUser().getUsername(), Long.valueOf(itemDTO.getIsLost()) == 1 ? "招领" :
                 "失物");
         itemService.publish(itemDTO);
-        return Result.success();
+        return Result.success("发表失物招领成功！");
     }
 
     @PostMapping("/upload")
@@ -55,17 +56,16 @@ public class ItemController {
                 "招领" : "失物");
         log.info("参数为{}", itemDTO);
         itemService.modify(itemDTO);
-        return Result.success();
+        return Result.success("修改失物招领成功！");
     }
 
     @PutMapping("/finish")
     @ApiOperation("完成一项失物招领")
-    public Result finish(@RequestBody Map<String, Object> requestBody) {
+    public Result finish(@RequestBody Map<String, Long> requestBody) {
         Long id = ((Number) requestBody.get("id")).longValue();
-        Integer status = (Integer) requestBody.get("status");
         log.info("{}用户将{}号失物招领标记为完成...", id);
-        itemService.finish(id, status);
-        return Result.success();
+        itemService.finish(id, COMPLETE);
+        return Result.success(id + "号失物招领标记为完成!");
     }
 
     @DeleteMapping
@@ -73,7 +73,7 @@ public class ItemController {
     public Result delete(@RequestParam List<Long> ids) {
         log.info("批量删除失物招领：{}", ids);
         itemService.deleteByIds(ids);
-        return Result.success();
+        return Result.success("批量删除失物招领成功！");
     }
 
     @GetMapping("/page")

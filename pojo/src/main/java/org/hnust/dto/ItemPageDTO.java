@@ -1,11 +1,14 @@
 package org.hnust.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -17,8 +20,13 @@ public class ItemPageDTO implements Serializable {
     private String name;
     private Integer status;     // 0代表未审核，1代表审核失败，2代表未解决，3代表已解决
     private Integer tag;        // 物品类型： 0日常用品 1重要物品
+    // 这个字段在用户中才会使用
     private Long userId;
     private Integer isLost;     // 0代表丢失，1代表招领
-    private Timestamp startTime;
-    private Timestamp endTime;
+    // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat
+    private LocalDateTime startTime;
+    // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat
+    private LocalDateTime endTime;
 }

@@ -28,7 +28,7 @@ public class SuggestionController {
     private SuggestionService suggestionService;
 
     @GetMapping("/page")
-    @ApiOperation("用户分页查询建议")
+    @ApiOperation("管理员分页查询建议")
     public Result<PageResult> page(SuggestionPageQueryDTO suggestionPageQueryDTO) {
         log.info("用户分页查询建议，参数为: {}", suggestionPageQueryDTO);
         PageResult pageResult = suggestionService.pageQuery(suggestionPageQueryDTO, ADMIN);
@@ -44,7 +44,7 @@ public class SuggestionController {
         String msg = (String) requestBody.get("msg");
         log.info("管理员{}正在审核{}号建议...", BaseContext.getCurrentUser().getUsername(), id);
         suggestionService.validate(id, status, msg);
-        return Result.success();
+        return Result.success("审核成功！");
     }
 
     @GetMapping("{id}")

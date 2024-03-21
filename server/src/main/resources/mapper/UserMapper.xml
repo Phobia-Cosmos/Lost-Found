@@ -5,13 +5,13 @@
 <mapper namespace="org.hnust.mapper.UserMapper">
 
     <select id="pageQuery" resultType="org.hnust.vo.UserVO">
-        select id,name,phone,email,avatar,role,reputation,school,create_time from users
+        select id,username,phone,email,avatar,role,reputation,school,create_time from users
         <where>
-            <if test="role != null">
-                and role = #{role}
-            </if>
-            <if test="name != null and name != ''">
-                and name like concat('%', #{name}, '%')
+            <!--            <if test="role != null">-->
+            <!--                and role = #{role}-->
+            <!--            </if>-->
+            <if test="username != null and username != ''">
+                and username like concat('%', #{username}, '%')
             </if>
             <if test="phone != null and phone != ''">
                 and phone like concat('%', #{phone}, '%')

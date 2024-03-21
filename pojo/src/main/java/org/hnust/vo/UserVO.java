@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 @Builder
 public class UserVO {
     private Long id;
-    private String name;
+    private String username;
     private String phone;
     private String email;
     private String avatar;

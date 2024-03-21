@@ -3,7 +3,9 @@ package org.hnust.controller.v2.admin;
 import cn.hutool.core.bean.BeanUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.hnust.context.BaseContext;
 import org.hnust.dto.LoginDTO;
 import org.hnust.dto.PasswordEditDTO;
 import org.hnust.dto.UserDTO;
@@ -16,6 +18,7 @@ import org.hnust.service.UserService;
 import org.hnust.utils.JwtUtil;
 import org.hnust.vo.LoginVO;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -72,6 +75,16 @@ public class AdminController {
                 .build();
 
         return Result.success(adminLoginVO, "管理员登录成功");
+    }
+
+    @PostMapping("/upload")
+    @ApiOperation("上传照片")
+    public Result upload(MultipartFile file) {
+        log.info("照片信息{}", file);
+        // TODO yonghuxinxicundaoredis
+        log.info("用户上传了{}照片", file.getOriginalFilename());
+        String pictureURL = userService.uploadPicture(file);
+        return Result.success(pictureURL, "上传照片成功！");
     }
 
     @DeleteMapping

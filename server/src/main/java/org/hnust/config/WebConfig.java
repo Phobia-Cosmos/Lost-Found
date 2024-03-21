@@ -32,6 +32,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
         registry.addInterceptor(jwtTokenAdminInterceptor)
                 .addPathPatterns("/admin/v2/**")
                 .excludePathPatterns("/admin/v2/user/login")
+                .excludePathPatterns("/admin/v2/user/upload")
                 .excludePathPatterns("/admin/v2/user/register");  // Exclude GET, PUT, DELETE requests
 
         registry.addInterceptor(jwtTokenUserInterceptor)

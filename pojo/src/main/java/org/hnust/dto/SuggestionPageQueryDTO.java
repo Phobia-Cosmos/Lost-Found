@@ -10,7 +10,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SuggestionPageQueryDTO implements Serializable {
-
     private Long userId;
     private Integer tag; // 需要人为设置值来指代意义
     private Integer pollCount;

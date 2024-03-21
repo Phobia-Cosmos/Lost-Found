@@ -29,19 +29,19 @@ public class ItemController {
     private ItemService itemService;
 
     @PutMapping("/validate")
-    @ApiOperation("管理员审核建议")
+    @ApiOperation("管理员审核失物招领")
     public Result validate(@RequestBody Map<String, Object> requestBody) {
         Long id = ((Number) requestBody.get("id")).longValue();
         Integer status = (Integer) requestBody.get("status");
         log.info("管理员{}正在审核{}号物品...", BaseContext.getCurrentUser().getUsername(), id);
         itemService.validate(id, status);
-        return Result.success();
+        return Result.success("审核成功！");
     }
 
     @GetMapping("/page")
-    @ApiOperation("管理员分页查询建议")
+    @ApiOperation("管理员分页查询失物招领")
     public Result<PageResult> page(ItemPageDTO itemPageDTO) {
-        log.info("管理员分页查询建议，参数为: {}", itemPageDTO);
+        log.info("管理员分页查询失物招领，参数为: {}", itemPageDTO);
         PageResult pageResult = itemService.pageQuery(itemPageDTO, ADMIN);
         return Result.success(pageResult);
     }

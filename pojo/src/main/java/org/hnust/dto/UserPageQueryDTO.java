@@ -11,7 +11,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class UserPageQueryDTO implements Serializable {
 
-    private String name;
+    private String username;
     private String phone;
     private String email;
     private String school;

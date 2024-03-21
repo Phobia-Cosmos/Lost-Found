@@ -5,6 +5,7 @@ import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.hnust.constant.MessageConstant;
 import org.hnust.context.BaseContext;
 import org.hnust.dto.LoginDTO;
@@ -13,22 +14,29 @@ import org.hnust.dto.UserDTO;
 import org.hnust.dto.UserPageQueryDTO;
 import org.hnust.entity.User;
 import org.hnust.exception.*;
+import org.hnust.file.service.FileStorageService;
 import org.hnust.mapper.UserMapper;
 import org.hnust.result.PageResult;
 import org.hnust.vo.UserVO;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
 
 @Service
+@Slf4j
 public class UserService {
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private FileStorageService fileStorageService;
 
     // 用户必须提供三者之一，如果都没有则不能注册
     public void register(LoginDTO loginDTO, int role) {
@@ -190,5 +198,26 @@ public class UserService {
         if ((StrUtil.isBlank(password))) {
             throw new PasswordNotProvidedException(MessageConstant.PASSWORD_NOT_PROVIDED);
         }
+    }
+
+    public String uploadPicture(MultipartFile multipartFile) {
+        if (multipartFile == null || multipartFile.getSize() == 0) {
+            throw new ParamInvalidException(MessageConstant.PARAM_INVALID);
+        }
+
+        String fileName = java.util.UUID.randomUUID().toString().replace("-", "");
+        String originalFilename = multipartFile.getOriginalFilename();
+        String postfix = originalFilename.substring(originalFilename.lastIndexOf("."));
+        String fileId = null;
+        try {
+            fileId = fileStorageService.uploadImgFile("", fileName + postfix, multipartFile.getInputStream());
+            log.info("上传图片到MinIO中，fileId:{}", fileId);
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("WmMaterialServiceImpl-上传文件失败");
+        }
+
+        // 3.保存到数据库中
+        return fileId;
     }
 }

@@ -3,7 +3,9 @@ package org.hnust.controller.v2.user;
 import cn.hutool.core.bean.BeanUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.hnust.context.BaseContext;
 import org.hnust.dto.LoginDTO;
 import org.hnust.dto.PasswordEditDTO;
 import org.hnust.dto.UserDTO;
@@ -16,6 +18,7 @@ import org.hnust.service.UserService;
 import org.hnust.utils.JwtUtil;
 import org.hnust.vo.LoginVO;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -69,6 +72,14 @@ public class UserController {
                 .build();
 
         return Result.success(adminLoginVO, "用户登录成功");
+    }
+
+    @PostMapping("/upload")
+    @ApiOperation("上传照片")
+    public Result upload(@ApiParam(value = "用户图像图片", required = true) @RequestPart("file") MultipartFile multipartFile) {
+        log.info("{}用户上传了{}照片", BaseContext.getCurrentUser().getUsername(), multipartFile.getOriginalFilename());
+        String pictureURL = userService.uploadPicture(multipartFile);
+        return Result.success(pictureURL, "上传照片成功！");
     }
 
     // TODO:这个也是Admin用户权限，用户只能删除自己的数据

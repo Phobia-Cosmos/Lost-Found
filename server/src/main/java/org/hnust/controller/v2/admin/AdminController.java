@@ -64,12 +64,7 @@ public class AdminController {
         LoginVO adminLoginVO = LoginVO.builder()
                 .id(user.getId())
                 .username(user.getUsername())
-                .name(user.getName())
-                .phone(user.getPhone())
-                .email(user.getEmail())
                 .avatar(user.getAvatar())
-                .reputation(user.getReputation())
-                .school(user.getSchool())
                 .role(ADMIN)
                 .token(token)
                 .build();

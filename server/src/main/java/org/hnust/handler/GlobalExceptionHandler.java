@@ -2,6 +2,7 @@ package org.hnust.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hnust.constant.MessageConstant;
+import org.hnust.enums.AppCode;
 import org.hnust.exception.BaseException;
 import org.hnust.result.Result;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -23,7 +24,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public Result exceptionHandler(BaseException ex) {
         log.error("异常信息：{}", ex.getMessage());
-        return Result.error(ex.getMessage());
+        return Result.error(AppCode.COMMON_ERROR);
     }
 
     @ExceptionHandler

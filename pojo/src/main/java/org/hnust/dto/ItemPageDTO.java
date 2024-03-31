@@ -1,13 +1,11 @@
 package org.hnust.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Data
@@ -24,9 +22,11 @@ public class ItemPageDTO implements Serializable {
     private Long userId;
     private Integer isLost;     // 0代表丢失，1代表招领
     // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat
+    // @DateTimeFormat
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;
     // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat
+    // @DateTimeFormat
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 }

@@ -36,6 +36,7 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
             System.out.println(claims);
             Object user = claims.get(jwtProperties.getAdminTokenName());
 
+            // 如果这个数据存在前端传递过来，我们想要去除数据也很难，要反序列化Json
             UserDTO userDTO = new UserDTO();
             if (user instanceof Map) {
                 Map<String, Object> userMap = (Map<String, Object>) user;

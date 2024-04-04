@@ -14,9 +14,9 @@
             <if test="tag != null">tag = #{tag},</if>
             <if test="userId != null">user_id = #{userId},</if>
             <if test="isLost != null">is_lost = #{isLost},</if>
-            <if test="startTime != null">start_time = #{startTime},</if>
-            <if test="endTime != null">end_time = #{endTime},</if>
             <if test="publishTime != null">publish_time = #{publishTime},</if>
+            <if test="region != null and region != ''">region = #{region},</if>
+            <if test="color != null">color = #{color},</if>
         </set>
         WHERE id = #{id}
     </update>
@@ -49,8 +49,14 @@
             <if test="query.isLost != null">
                 and is_lost = #{query.isLost}
             </if>
+            <if test="query.startTime != null">
+                and publish_time &gt;= #{query.startTime}
+            </if>
+            <if test="query.endTime != null">
+                and publish_time &lt;= #{query.endTime}
+            </if>
         </where>
-        order by end_time asc , start_time desc
+        order by publish_time
     </select>
 
     <!--    TODO：日期范围未规定-->

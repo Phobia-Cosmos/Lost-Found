@@ -32,7 +32,7 @@ public class RefreshTokenInterceptor implements HandlerInterceptor {
         // Object user = session.getAttribute("user");
 
         // TODO:将这个Key设为常数
-        String header = request.getHeader("authorization");
+        String header = request.getHeader("authentication");
         if (StrUtil.isBlank(header)) {
             return true;
         }

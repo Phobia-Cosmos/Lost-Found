@@ -21,12 +21,8 @@ public class ItemPageDTO implements Serializable {
     // 这个字段在用户中才会使用
     private Long userId;
     private Integer isLost;     // 0代表丢失，1代表招领
-    // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    // @DateTimeFormat
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;
-    // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    // @DateTimeFormat
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 }

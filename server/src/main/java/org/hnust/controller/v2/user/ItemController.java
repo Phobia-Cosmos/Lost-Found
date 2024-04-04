@@ -30,25 +30,6 @@ public class ItemController {
     @Resource
     private ItemService itemService;
 
-    //  TODO：用户时间类型不对劲！
-    @PostMapping
-    @ApiOperation("发表失物招领")
-    public Result publish(@RequestBody ItemDTO itemDTO) {
-        log.info("{}用户发表了{}", BaseContext.getCurrentUser().getUsername(), Long.valueOf(itemDTO.getIsLost()) == 1 ? "招领" :
-                "失物");
-        itemService.publish(itemDTO);
-        return Result.success("发表失物招领成功！");
-    }
-
-    @PostMapping("/upload")
-    @ApiOperation("上传照片")
-    // TODO:如何使用这个MultipartFile获取文件名？
-    public Result upload(@ApiParam(value = "失物招领图片", required = true) @RequestPart("file") MultipartFile multipartFile) {
-        log.info("{}用户上传了{}照片", BaseContext.getCurrentUser().getUsername(), multipartFile.getOriginalFilename());
-        String pictureURL = itemService.uploadPicture(multipartFile);
-        return Result.success(pictureURL, "上传照片成功！");
-    }
-
     @PutMapping
     @ApiOperation("修改失物招领")
     public Result modify(@RequestBody ItemDTO itemDTO) {
@@ -92,5 +73,23 @@ public class ItemController {
     public Result<Item> getById(@PathVariable Long id) {
         Item item = itemService.getById(id);
         return Result.success(item);
+    }
+
+    @PostMapping
+    @ApiOperation("发表失物招领")
+    public Result<String> publish(@RequestBody ItemDTO itemDTO) {
+        log.info("{}用户发表了{}", BaseContext.getCurrentUser().getUsername(), Long.valueOf(itemDTO.getIsLost()) == 1 ? "招领" :
+                "失物");
+        itemService.publish(itemDTO);
+        return Result.success("发表失物招领成功！");
+    }
+
+    @PostMapping("/upload")
+    @ApiOperation("上传照片")
+    public Result<String> upload(@ApiParam(value = "失物招领图片", required = true) @RequestPart("file") MultipartFile multipartFile) {
+        // 由于用户上传不需要权限，因此不可以获取当前用户信息
+        log.info("用户上传了{}照片", multipartFile.getOriginalFilename());
+        String pictureURL = itemService.uploadPicture(multipartFile);
+        return Result.success(pictureURL, "上传照片成功！");
     }
 }

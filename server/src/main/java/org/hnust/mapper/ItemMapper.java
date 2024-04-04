@@ -13,9 +13,10 @@ import java.util.List;
 @Mapper
 public interface ItemMapper {
 
-    @Insert("INSERT INTO items(name, description, img, status, tag, user_id, is_lost, start_time, end_time, publish_time)" +
+    @Insert("INSERT INTO items(name, description, img, status, tag, user_id, is_lost, publish_time, region, color)" +
             " VALUES" +
-            " (#{name}, #{description}, #{img}, #{status}, #{tag}, #{userId}, #{isLost}, #{startTime}, #{endTime}, #{publishTime})")
+            " (#{name}, #{description}, #{img}, #{status}, #{tag}, #{userId}, #{isLost}, #{publishTime}, #{region}," +
+            "#{color})")
     void insert(Item item);
 
 

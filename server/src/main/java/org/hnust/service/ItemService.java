@@ -19,8 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,29 +34,12 @@ public class ItemService {
     @Resource
     private FileStorageService fileStorageService;
 
-    // 如果没有设置起始和结束时间，则默认为当前时间
-    // TODO:判断用户是否存在
-    public void publish(ItemDTO itemDTO) {
-        Item item = BeanUtil.copyProperties(itemDTO, Item.class);
-        item.setStatus(WAITING);
-
-        if (itemDTO.getStartTime() == null) {
-            item.setStartTime(Timestamp.valueOf(LocalDateTime.now()));
-        }
-        if (itemDTO.getEndTime() == null) {
-            item.setEndTime(Timestamp.valueOf(LocalDateTime.now()));
-        }
-
-        item.setPublishTime(Timestamp.valueOf(LocalDateTime.now()));
-        itemMapper.insert(item);
-    }
-
     // TODO:不能修改userId
     public void modify(ItemDTO itemDTO) {
         isItemExists(itemDTO.getId());
         Item item = BeanUtil.copyProperties(itemDTO, Item.class);
-        Timestamp startTime = item.getStartTime();
-        log.info("起始时间为{}", startTime);
+        // Timestamp startTime = item.getStartTime();
+        // log.info("起始时间为{}", startTime);
         itemMapper.update(item);
     }
 
@@ -87,27 +68,41 @@ public class ItemService {
         itemMapper.deleteByIds(ids);
     }
 
-    public PageResult pageQuery(ItemPageDTO itemPageDTO, Integer role) {
-        PageHelper.startPage(itemPageDTO.getPage(), itemPageDTO.getPageSize());
-        Page<Item> page = itemMapper.pageQuery(itemPageDTO, role);
-        return new PageResult(page.getTotal(), page.getResult());
-    }
-    // 以下方式会查出
 
     public Item getById(Long id) {
         return isItemExists(id);
     }
 
-    public void validate(Long id, Integer status) {
-        isItemExists(id);
-        if (status > 3 || status < 0) {
-            throw new OperationNotAllowedException(MessageConstant.OPERATION_NOT_ALLOWED);
+
+    public List<Item> getAll() {
+        return itemMapper.selectAll();
+    }
+
+    public PageResult pageQuery(ItemPageDTO itemPageDTO, Integer role) {
+        PageHelper.startPage(itemPageDTO.getPage(), itemPageDTO.getPageSize());
+        Page<Item> page = itemMapper.pageQuery(itemPageDTO, role);
+        return new PageResult(page.getTotal(), page.getResult());
+    }
+
+    // 不需要判断用户是否存在，因为发表需要权限因此不要再次检查
+    public void publish(ItemDTO itemDTO) {
+        // String[] imgUrls = itemDTO.getImg().split(",\\s*");
+        String[] imgUrls = itemDTO.getImg().split(",");
+        StringBuilder concatenatedUrls = new StringBuilder();
+        for (String imgUrl : imgUrls) {
+            String filePath = imgUrl.replaceFirst("http://118.25.40.159:9090", ""); // Remove the prefix
+            concatenatedUrls.append(filePath).append(","); // Append the modified file path to the StringBuilder
         }
-        Item item = Item.builder()
-                .id(id)
-                .status(status)
-                .build();
-        itemMapper.update(item);
+
+        // Remove the trailing comma if present
+        if (concatenatedUrls.length() > 0) {
+            concatenatedUrls.deleteCharAt(concatenatedUrls.length() - 1);
+        }
+
+        Item item = BeanUtil.copyProperties(itemDTO, Item.class);
+        item.setImg(concatenatedUrls.toString()); // Set the concatenated image URLs
+        item.setStatus(WAITING);
+        itemMapper.insert(item);
     }
 
     public String uploadPicture(MultipartFile multipartFile) {
@@ -131,7 +126,15 @@ public class ItemService {
         return fileId;
     }
 
-    public List<Item> getAll() {
-        return itemMapper.selectAll();
+    public void validate(Long id, Integer status) {
+        isItemExists(id);
+        if (status > 3 || status < 0) {
+            throw new OperationNotAllowedException(MessageConstant.OPERATION_NOT_ALLOWED);
+        }
+        Item item = Item.builder()
+                .id(id)
+                .status(status)
+                .build();
+        itemMapper.update(item);
     }
 }

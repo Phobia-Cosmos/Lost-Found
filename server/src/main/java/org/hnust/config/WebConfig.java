@@ -44,7 +44,8 @@ public class WebConfig extends WebMvcConfigurationSupport {
                         "/user/v2/user/register"
                 ).order(1);
 
-        registry.addInterceptor(new RefreshTokenInterceptor(stringRedisTemplate)).addPathPatterns("/user/**").order(0);
+        registry.addInterceptor(new RefreshTokenInterceptor(stringRedisTemplate)).addPathPatterns("/user/**"
+                , "/chatGroup/**", "/chatInfo/**").order(0);
 
         registry.addInterceptor(jwtTokenAdminInterceptor)
                 .addPathPatterns("/admin/v2/**")

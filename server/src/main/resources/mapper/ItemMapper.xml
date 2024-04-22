@@ -37,6 +37,9 @@
             <if test="query.name != null and query.name != ''">
                 and name like concat('%',#{query.name},'%')
             </if>
+            <if test="query.region != null and query.region != ''">
+                and region like concat('%',#{query.region},'%')
+            </if>
             <if test="query.status != null">
                 and status = #{query.status}
             </if>
@@ -49,11 +52,11 @@
             <if test="query.isLost != null">
                 and is_lost = #{query.isLost}
             </if>
-            <if test="query.startTime != null">
-                and publish_time &gt;= #{query.startTime}
+            <if test="query.publishTime != null">
+                and publish_time &gt;= #{query.publishTime}
             </if>
-            <if test="query.endTime != null">
-                and publish_time &lt;= #{query.endTime}
+            <if test="query.color != null">
+                and color = #{query.color}
             </if>
         </where>
         order by publish_time

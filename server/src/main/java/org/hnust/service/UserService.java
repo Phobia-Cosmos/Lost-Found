@@ -179,7 +179,7 @@ public class UserService {
         if (user == null) {
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
-        isUserValid(user.getId());
+        // isUserValid(user.getId());
 
         user.setPassword("****");
         user.setSalt("****");

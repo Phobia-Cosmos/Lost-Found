@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hnust.mapper.ChatGroupMapper">
+    <delete id="deleteById">
+        delete
+        from chat_group
+        where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="org.hnust.entity.ChatGroup" useGeneratedKeys="true" keyProperty="id">
+        insert into chat_group
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="chatUserId != null">chat_user_id,</if>
+            <if test="userId != null">user_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="chatUserId != null">#{chatUserId},</if>
+            <if test="userId != null">#{userId},</if>
+        </trim>
+    </insert>
+
+</mapper>

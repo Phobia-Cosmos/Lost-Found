@@ -12,7 +12,9 @@ import java.io.Serializable;
 public class LoginDTO implements Serializable {
     private String username;
     private String password;
+    private String name;
     private String phone;
     private String email;
+    private String school;
     private String code;
 }

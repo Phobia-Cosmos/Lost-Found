@@ -22,6 +22,7 @@ import org.hnust.result.Result;
 import org.hnust.utils.RegexUtils;
 import org.hnust.utils.SendMailUtil;
 import org.hnust.vo.UserVO;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -32,6 +33,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static org.hnust.constant.RedisConstants.LOGIN_CODE_KEY;
@@ -43,12 +45,13 @@ import static org.hnust.constant.RedisConstants.LOGIN_CODE_TTL;
 public class UserService {
     @Resource
     private UserMapper userMapper;
-
     @Resource
     private FileStorageService fileStorageService;
-
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+
+    @Value("${default.avatar}")
+    private String defaultAvatar;
 
     // 现阶段用户只能提供Email和Phone来注册
     public void register(LoginDTO loginDTO, int role) {
@@ -67,7 +70,7 @@ public class UserService {
         String phoneCode = stringRedisTemplate.opsForValue().get(LOGIN_CODE_KEY + phone);
         // TODO:这里还没有判断是phone还是email注册，因此我们使用username（前端传的）
         // TODO:要先判断是email还是phone
-        String emailCode = stringRedisTemplate.opsForValue().get(LOGIN_CODE_KEY + username);
+        String emailCode = stringRedisTemplate.opsForValue().get(LOGIN_CODE_KEY + email);
 
         String cachedCode = phoneCode == null ? emailCode : phoneCode;
         log.info("" + cachedCode);
@@ -86,6 +89,7 @@ public class UserService {
         user.setReputation(0);
         user.setRole(role);
         user.setCreateTime(Timestamp.valueOf(LocalDateTime.now()));
+        user.setAvatar(defaultAvatar);
 
         userMapper.register(user);
     }
@@ -179,7 +183,6 @@ public class UserService {
         if (user == null) {
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
-        // isUserValid(user.getId());
 
         user.setPassword("****");
         user.setSalt("****");
@@ -195,7 +198,7 @@ public class UserService {
     }
 
     private static void isUserValid(Long id) {
-        if (id != BaseContext.getCurrentUser().getId()) {
+        if (!Objects.equals(id, BaseContext.getCurrentUser().getId())) {
             throw new ModificationNotAllowedException(MessageConstant.USER_INVALID);
         }
     }
@@ -211,7 +214,7 @@ public class UserService {
             throw new PhoneInvalidException(MessageConstant.PHONE_INVALID);
         }
         User byPhone = userMapper.selectByPhone(phone);
-        if (byPhone != null) {
+        if (byPhone != null && (!Objects.equals(byPhone.getPhone(), phone))) {
             throw new PhoneUsedException(MessageConstant.PHONE_ALREADY_EXISTS);
         }
 
@@ -219,12 +222,12 @@ public class UserService {
             throw new EmailInvalidException(MessageConstant.EMAIL_INVALID);
         }
         User byEmail = userMapper.selectByEmail(email);
-        if (byEmail != null) {
+        if (byEmail != null && (!Objects.equals(byEmail.getEmail(), email))) {
             throw new EmailUsedException(MessageConstant.EMAIL_ALREADY_EXISTS);
         }
 
         User byUsername = userMapper.selectByUsername(username);
-        if (byUsername != null) {
+        if (byUsername != null && (!Objects.equals(byUsername.getUsername(), username))) {
             throw new UsernameUsedException(MessageConstant.USERNAME_ALREADY_EXISTS);
         }
 
@@ -240,6 +243,7 @@ public class UserService {
 
         String fileName = java.util.UUID.randomUUID().toString().replace("-", "");
         String originalFilename = multipartFile.getOriginalFilename();
+        assert originalFilename != null;
         String postfix = originalFilename.substring(originalFilename.lastIndexOf("."));
         String fileId = null;
         try {

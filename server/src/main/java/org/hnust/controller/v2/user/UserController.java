@@ -76,8 +76,8 @@ public class UserController {
     @ApiOperation("用户登陆")
     public Result<LoginVO> login(@RequestBody LoginDTO loginDTO) {
         log.info("用户登录：{}", loginDTO);
-        User user = userService.login(loginDTO);
 
+        User user = userService.login(loginDTO);
         Map<String, Object> claims = new HashMap<>();
         UserDTO userDTO = BeanUtil.copyProperties(user, UserDTO.class);
         claims.put(jwtProperties.getUserTokenName(), userDTO);

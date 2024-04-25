@@ -268,9 +268,9 @@ public class UserService {
         // 其实前端只要禁止2min中内发送多次就好了，但是为了防止恶意破坏，还是可以判断
         if (authCode == null) {
             authCode = RandomUtil.randomNumbers(6);
-            SendMailUtil.sendEmailCode(targetEmail, "你的验证码为:" + authCode + "(一分钟内有效)");
-
             stringRedisTemplate.opsForValue().set(codeKey, authCode, LOGIN_CODE_TTL, TimeUnit.MINUTES);
+
+            SendMailUtil.sendEmailCode(targetEmail, "你的验证码为:" + authCode + "(一分钟内有效)");
 
             log.info("验证码为：" + authCode);
             return Result.success("发送邮箱验证码成功！");
